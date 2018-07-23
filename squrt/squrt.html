@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Цветной квадрат</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<script>
+/*хак для понимания фоксом outerHTML*/
+if (typeof(HTMLElement) != "undefined") {
+	 var _emptyTags = {
+	       "IMG": true,
+	       "BR": true,
+	       "INPUT": true,
+	       "META": true,
+	       "LINK": true,
+	       "PARAM": true,
+	       "HR": true
+	    };
+	     
+	    HTMLElement.prototype.__defineGetter__("outerHTML", function () {
+	       var attrs = this.attributes;
+	       var str = "<" + this.tagName;
+	       for (var i = 0; i < attrs.length; i++)
+	          str += " " + attrs[ i ].name + "=\"" + attrs[ i ].value + "\"";
+	     
+	       if (_emptyTags[this.tagName])
+	          return str + ">";
+	     
+	       return str + ">" + this.innerHTML + "</" + this.tagName + ">";
+	    });
+	     
+	    HTMLElement.prototype.__defineSetter__("outerHTML", function (sHTML) {
+	       var r = this.ownerDocument.createRange();
+	       r.setStartBefore(this);
+	       var df = r.createContextualFragment(sHTML);
+	       this.parentNode.replaceChild(df, this);
+	    });
+	}
+/*конец хака*/
+color_r=0;
+color_g=0;
+color_b=0;
+delta_r=3;
+delta_g=4;
+delta_b=5;
+function colors(){
+color_r=color_r+delta_r;
+color_g=color_g+delta_g;
+color_b=color_b+delta_b;
+if(color_r>255)delta_r=-delta_r;
+if(color_g>255)delta_g=-delta_g;
+if(color_b>255)delta_b=-delta_b;
+if(color_r<0)delta_r=-delta_r;
+if(color_g<0)delta_g=-delta_g;
+if(color_b<0)delta_b=-delta_b;
+document.getElementById("sq").outerHTML='<div id="sq" style="top:50; left:50; height:800;width:800; background-color:rgb('+color_r+','+color_g+','+color_b+')" onmousemove="colors()" ></div>';
+}
+</script>
+<center><div style="top:50; left:50; height:800;width:800; background-color:rgb(0,0,0)" id="sq" onmousemove="colors()"></div></center>
+</body>
+</html>
+

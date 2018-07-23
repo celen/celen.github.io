@@ -1,0 +1,338 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title> CSSplay</title>
+
+
+<style type="text/css"> 
+
+/* Это общий блок - для позиционирования всего монстра. 
+Если понадобиться вставить игру в страницу с другими стилями, надо не забыть приписать к всему, что ниже, "#box" */
+#box { 
+position:relative; 
+margin:100px 100px;
+}
+#box a{text-decoration: none; color: #000;} 
+
+
+/* А сюда наступать лучше не стоит */
+a#maze, a#maze:visited { 
+opacity: 0.3;  
+width:500px; height:500px; 
+background:#000; 
+position:absolute; 
+top:0; left:0; 
+z-index:5;
+}
+a#maze:hover {
+background:#f00; 
+z-index:500; 
+cursor: crosshair;
+}
+a#maze:hover span {
+display:block; 
+position:absolute; 
+width:500px; height:500px; 
+cursor: crosshair; 
+top:0; left:0;
+}
+
+/* Север, юг, запад, восток. Параметры - для блоков текста подсказок */
+.world { position:absolute; border: 1px dashed #ccc; }
+#n { left:5px; top:5px; right: 5px; bottom: 400px; text-align:justify; }
+#w { left:5px; top:110px; right:230px; bottom:110px; text-align:left; }
+#s { left:5px; top:400px; right:5px; bottom: 5px; text-align:justify; }
+#e { left:230px; top:110px; right:5; bottom:110px; text-align:left; }
+
+/* Желтенькое "меню", там, где обычно высвечиваются подсказки, разные компоненты. Тут адские полчища все копыта поломают, буду переделывать */ 
+#menu {z-index:7;  position:absolute; top:0px; left:550px;}
+#menu1 {z-index:7; opacity: 1;  text-align:justify; background:#f1f1e3; position:absolute; top:0px; left:0px; width:340px; height:490px;}
+#menu1:hover {z-index:8; opacity: 1;  text-align:justify; background:#f1f1e3; position:absolute; top:0px; left:0px; width:340px; height:490px;}
+#menu2 {z-index:7; opacity: 0;  text-align:justify; background:#f1f1e3; position:absolute; top:5px; left:0px; width:345px; height:490px;}
+#menu2:hover {z-index:8; opacity: 1;  text-align:justify; background:#f1f1e3; position:absolute; top:5px; left:0px; width:345px; height:490px;}
+#menu3 {z-index:7; opacity: 0;  text-align:justify; background:#f1f1e3; position:absolute; top:5px; left:0px; width:345px; height:490px;}
+#menu3:hover {z-index:8; opacity: 1;  text-align:justify; background:#f1f1e3; position:absolute; top:5px; left:0px; width:345px; height:490px;}
+#text {position:absolute; top:0px; left:5px;}
+#lon1 {z-index:50; position:absolute; opacity:0;  top:48px; left:-47px; width:50px; height:95px;}
+#lon2 {position:absolute; top:145px; left:-45px;}
+#lof2 {position:absolute; top:45px; left:-45px;}
+#lon3 {position:absolute; top:245px; left:-45px;}
+#lof3 {position:absolute; top:45px; left:-45px;}
+
+/* Декоративные элементы - часики-кнопочки. */
+#fon {z-index:1; position:absolute; top:-50px; left:-50px; width:1000px; height:600px;}
+#gui {z-index:100; position:absolute; top:0px; left:0px;}
+#lamp1 {opacity: 0.5;  position:absolute; top:-50px; left:750px;} 
+#lamp2 {opacity: 0.5; position:absolute; top:-50px; left:800px;}
+#lamp3 {opacity: 0.5; position:absolute; top:-50px; left:850px;}
+#clock {opacity: 0.5; position:absolute; top:430px; left:500px;}
+#cross {position:absolute; top:115px; left:121px; border:0;}
+#on {opacity: 0;  position:absolute; top:2px; left:500px; border: 0}
+#on:hover {opacity: 1;  position:absolute; top:2px; left:500px; border: 0}
+/*самый важный элемент декора - музыкальный плеер =)*/
+#muse { z-index: 5; position:absolute; top:360px; left:435px;}
+
+
+
+/*И, наконец, клетки. */
+
+/*характеристики тех клеток, на которые безопастно наступать. Для всех вместе */
+a.swap {
+opacity: 0;  
+width:50px; height:50px; 
+background:#000; 
+position:absolute; 
+z-index:9;
+font-size:11pt; font-family: PT Sans, sans-serif;
+}
+a.swap:hover {
+opacity: 0.5;  
+background:url(man.gif) 0 0 no-repeat; 
+cursor: crosshair; 
+z-index:10;
+}
+a.swap span {display:none;}
+a.swap:hover {z-index:10;}
+a.swap:hover span {
+display:block; 
+background:url(none.gif); 
+position:absolute;
+}
+
+/* и каждой по отдельности. */
+a#a0 {top:0px; left:0px;}
+a#a0:hover span{top:0px; left:550px; width:350px; height:500px;}
+
+a#a8 {top:0px; left:400px;}
+a#a8:hover span{top:0px; left:150px; width:350px; height:500px;}
+
+a#a9 {top:0px; left:450px;}
+a#a9:hover span{top:0px; left:100px; width:350px; height:500px;}
+
+a#b2 {top:50px; left:100px;}
+a#b2:hover span{top:-50px; left:450px; width:350px; height:500px;}
+
+a#b3 {top:50px; left:150px;}
+a#b3:hover span{top:-50px; left:400px; width:350px; height:500px;}
+
+a#b4 {top:50px; left:200px;}
+a#b4:hover span{top:-50px; left:350px; width:350px; height:500px;}
+
+a#b5 {top:50px; left:250px;}
+a#b5:hover span{top:-50px; left:300px; width:350px; height:500px;}
+
+a#c2 {top:100px; left:100px;}
+a#c2:hover span{top:-100px; left:450px; width:350px; height:500px;}
+
+a#c5 {top:100px; left:250px;}
+a#c5:hover span{top:-100px; left:300px; width:350px; height:500px;}
+
+a#c6 {top:100px; left:300px;}
+a#c6:hover span{left:250px; top:-100px; width:350px; height:500px;}
+
+a#c7 {top:100px; left:350px;}
+a#c7:hover span{left:200px; top:-100px; width:350px; height:500px;}
+
+a#c8 {top:100px; left:400px;}
+a#c8:hover span{left:150px; top:-100px; width:350px; height:500px;}
+
+a#d1 {top:150px; left:50px;}
+a#d1:hover span{left:500px; top:-150px; width:350px; height:500px;}
+
+a#d2 {top:150px; left:100px;}
+a#d2:hover span{left:450px; top:-150px; width:350px; height:500px;}
+
+a#d3 {top:150px; left:150px;}
+a#d3:hover span{left:400px; top:-150px; width:350px; height:500px;}
+
+a#d4 {top:150px; left:200px;}
+a#d4:hover span{left:350px; top:-150px; width:350px; height:500px;}
+
+a#d5 {top:150px; left:250px;}
+a#d5:hover span{left:300px; top:-150px; width:350px; height:500px;}
+
+a#d8 {top:150px; left:400px;}
+a#d8:hover span{left:150px; top:-150px; width:350px; height:500px;}
+
+a#e1 {top:200px; left:50px;}
+a#e1:hover span{left:500px; top:-200px; width:350px; height:500px;}
+
+a#e4 {top:200px; left:200px;}
+a#e4:hover span{left:350px; top:-200px; width:350px; height:500px;}
+
+a#e5 {top:200px; left:250px;}
+a#e5:hover span{left:300px; top:-200px; width:350px; height:500px;}
+
+a#e6 {top:200px; left:300px;}
+a#e6:hover span{left:250px; top:-200px; width:350px; height:500px;}
+
+a#f1 {top:250px; left:50px;}
+a#f1:hover span{left:500px; top:-250px; width:350px; height:500px;}
+
+a#f2 {top:250px; left:100px;}
+a#f2:hover span{left:450px; top:-250px; width:350px; height:500px;}
+
+a#f4 {top:250px; left:200px;}
+a#f4:hover span{left:350px; top:-250px; width:350px; height:500px;}
+
+a#f6 {top:250px; left:300px;}
+a#f6:hover span{left:250px; top:-250px; width:350px; height:500px;}
+
+a#f8 {top:250px; left:400px;}
+a#f8:hover span{left:150px; top:-250px; width:350px; height:500px;}
+
+a#g2 {top:300px; left:100px;}
+a#g2:hover span{left:450px; top:-300px; width:350px; height:500px;}
+
+a#g6 {top:300px; left:300px;}
+a#g6:hover span{left:250px; top:-300px; width:350px; height:500px;}
+
+a#g8 {top:300px; left:400px;}
+a#g8:hover span{left:150px; top:-300px; width:350px; height:500px;}
+
+a#h1 {top:350px; left:50px;}
+a#h1:hover span{left:500px; top:-350px; width:350px; height:500px;}
+
+a#h2 {top:350px; left:100px;}
+a#h2:hover span{left:450px; top:-350px; width:350px; height:500px;}
+
+a#h3 {top:350px; left:150px;}
+a#h3:hover span{left:400px; top:-350px; width:350px; height:500px;}
+
+a#h4 {top:350px; left:200px;}
+a#h4:hover span{left:350px; top:-350px; width:350px; height:500px;}
+
+a#h5 {top:350px; left:250px;}
+a#h5:hover span{left:300px; top:-350px; width:350px; height:500px;}
+
+a#h6 {top:350px; left:300px;}
+a#h6:hover span{left:250px; top:-350px; width:350px; height:500px;}
+
+a#h7 {top:350px; left:350px;}
+a#h7:hover span{left:200px; top:-350px; width:350px; height:500px;}
+
+a#h8 {top:350px; left:400px;}
+a#h8:hover span{left:150px; top:-350px; width:350px; height:500px;}
+
+a#j0 {top:400px; left:0px;}
+a#j0:hover span{left:550px; top:-400px; width:350px; height:500px;}
+
+a#j1 {top:400px; left:50px;}
+a#j1:hover span{left:500px; top:-400px; width:350px; height:500px;}
+
+a#j4 {top:400px; left:200px;}
+a#j4:hover span{left:350px; top:-400px; width:350px; height:500px;}
+
+a#j7 {top:400px; left:350px;}
+a#j7:hover span{left:200px; top:-400px; width:350px; height:500px;}
+
+a#k0 {top:450px; left:0px;}
+a#k0:hover span{left:550px; top:-450px; width:350px; height:500px;}
+
+a#k1 {top:450px; left:50px;}
+a#k1:hover span{left:500px; top:-450px; width:350px; height:500px;}
+
+a#k9 {top:450px; left:450px;}
+a#k9:hover span{left:100px; top:-450px; width:350px; height:500px;}
+
+/* отдельно - для победной клетки */
+a#b8 {top:50px; left:400px;}
+a#b8:hover {z-index:500;}
+a#b8:hover span{
+display:block; 
+background:url(win.png)0 0 no-repeat; 
+position:absolute; 
+top:-50px; left:-400px; width:500px; height:500px;
+}
+#center1 {position: absolute; left: 50%; top: 50%; margin-left:-550px; margin-top:-345px; border: 0;}
+#center2 {position:relative; left:0; top:0; border: 0;}
+
+</style>
+
+
+</head>
+
+<body>
+<div id="center1">
+<div id="center2">
+<div id="box">
+
+<img id="fon" src="kpk.jpg">
+<div id="gui"><img id="lamp1" src="lamp1.gif"><img id="lamp2" src="lamp2.gif"><img id="lamp3" src="lamp3.gif"><a href="http://celen.me/gamedev"><img id="on" src="on.png"></a><img id="lamp1" src="lamp1.gif"><img id="lamp2" src="lamp2.gif"><img id="clock" src="clock.gif"><img id="lamp3" src="lamp3.gif"></div>
+
+<div id="menu"><div id="menu1"><img src="lon.png" id="lon1"><img id="cross" src="cross.png"></div><div id="menu2"><img src="lon.png" id="lon2"><img src="lof.png" id="lof2"><div id="text">
+Я проникну в Зону.
+Никто из людей не знает, что это за место, и как оно возникло. Знают те. Чужой разум, хе.  Три года назад посетившие нашу никчемную планетку.  Породили Зоны — и исчезли.
+Зачем я пишу это? Не знаю. Не для людей — люди знают все без меня. Может быть, для чужих? Смешно. 
+Я пишу это для себя.
+Их всего пять. Хармонтская и Кировская — слишком заселенны. Слишком много грязи вокруг них... Еще две точки радаманта — до них я не доберусь. Мертвый колпак исследований и военных тайн. Осталась эта.
+Небольшая, в глуби таежных болот. Почти не исследованная.  Я собрал всю информацию про это место — немного, но мне хватит. 
+Граница Зоны проходит по квадрату. Время здесь неподвижно. Жалко — взял бы напарника. А так — нет смысла, он останется на границе в том же мгновении, в котором я вошел сюда. Еще одна странность этого места.   
+Навигатор барахлит. Глюки с картой. Надеюсь, он поможет хотя бы не потерять ориентацию. 
+Осторожнее. Здесь лишнее движение иной раз — смерть. Я буду описывать все, что вижу с четырех сторон, и решать этим, куда пойти.    
+Для начала следует зайти с угла.</div></div><div id="menu3"><img src="lon.png" id="lon3"><img src="lof.png" id="lof3"><div id="text"><p align="right">Я написал эту игру в далеком 2010 году на чистом CSS. С тех пор технологии так изменились!</p><p align="center"><h2>Зона Очуждения</h2></p><h7><i>CSS-игра по мотивам произведения братьев Стругацких "Пикник на обочине".</i></h7><p>Двигая мышью, вы управляете героем, перемещающим по Зоне Очуждения, на экране его же навигатора. Ваша задача - дойти до "золотого шара". Если вы поместите мышь на опасную клетку, ваш герой умрет, и вам придется начать игру заново. Для выявления неправильных клеток используете подсказки, появляющиеся в этой части экрана по мере продвижения героя.</p><p>Для музыкального оформления рекомендую композицию Steamflower группы Anthesteria. </p><p align="center">Удачи в игре!</p></div></div></div>
+
+
+<div id="opera">
+<a href="#nogo" class="swap" id="a0"><span><img id="cross" src="cross.png"><div class="world" id="n">Чувствую, я зашел не с той стороны.  Может, вернуться в лес? Трус? Нет, осторожный. Пойти иной дорогой. </div><div class="world" id="w">Лес застыл. Будто гигантская фотография. Пересеки невидимую границу — и пока ты будешь там, здесь, может быть, пройдут миллионы лет. </div><div class="world" id="s">Гладь болота  колеблется.  Попробовать перебраться через топь? </div><div class="world" id="e">Над подернутой ряской гладью поднимаются зловонные пузыри. Пока ничего странного — если не считать цвет неба.</div></span></a>
+<!--<a href="#nogo" class="swap" id="a8"><span><img id="cross" src="cross.png"><div class="world" id="n"></div><div class="world" id="w"></div><div class="world" id="s"></div><div class="world" id="e"></div></span></a> -->
+<a href="#nogo" class="swap" id="a9"><span><img id="cross" src="cross.png"><div class="world" id="n">Странное место. Стоит развернуться? В лесу никто не заставит вспоминать старые грехи. </div><div class="world" id="w">Это называют "Дорогой чистых душ". Говорят, что только те, чей разум не обременен мирской суетой, могут воспользоваться этим путем. </div><div class="world" id="s">Самый короткий путь к террасе. Странно даже, что никто никогда не пользуется им. Всего несколько шагов - и я у цели. </div><div class="world" id="e">Стоит пересечь границу Зоны — и болото замерцает, а лес, стряхнув застылость, зашумит.</div></span></a>
+
+<a href="#nogo" class="swap" id="b2"><span><img id="cross" src="cross.png"><div class="world" id="n">Дальше идти нельзя. Там сухо. Придется повернуть.</div><div class="world" id="w">Сюда поворачивать тоже нельзя. Как бы абсурдно это не выглядело — бояться ступить на гладкий желтый песок. Хотя можно и попробовать.</div><div class="world" id="s">Вода позади еще расходится кругами. И на дальних тропинках оставим следы... как там?</div><div class="world" id="e">Водная тропа простирается предо мною. Зеркало лимана слегка проминается под весом.</div></span></a>
+<a href="#nogo" class="swap" id="b3"><span><img id="cross" src="cross.png"><div class="world" id="n">Таков закон, его не изменить. Стабильно состояние покоя. Воде, что начинается рекой трясиной предначертано застыть. </div><div class="world" id="w">Не тронут ветер темной глубины в пучинах мирового океана. Утихла рябь на зеркале лимана. Движения ее предрешены.</div><div class="world" id="s">И только капля, что сумеет воспарить над безмятежно стынущей водою расколет небо яростной грозою. Таков закон. Его не изменить.</div><div class="world" id="e">Ох, что это я. Заснул? Нет. Надо идти дальше. Таков закон... идти дальше. </div></span></a>
+<a href="#nogo" class="swap" id="b4"><span><img id="cross" src="cross.png"><div class="world" id="n">Вода и земля вновь поменялись местами. Теперь под ногами — земля, а вода — там, где был песок.</div><div class="world" id="w">Позади остался стихийный переход, позади осталось стихийный сон про воду, землю и жизнь.</div><div class="world" id="s">Барханы стали волнами. Волны рухнули и заросли чахлым болотным мхом. </div><div class="world" id="e">Вода под ногами медленно превращается в тропинку.</div></span></a>
+<a href="#nogo" class="swap" id="b5"><span><img id="cross" src="cross.png"><div class="world" id="n">В вновь появившемся тумане смутно виден  застывший лес. И лица, лица, лица, взирающие из дымки на дерзкого путника. </div><div class="world" id="w">Позади остался стихийный переход, позади осталось стихийный сон про воду, землю и жизнь.</div><div class="world" id="s">Новый поворот. Вперед. Да и тропинка стала удобнее. Хотя очень уж она кружевная.</div><div class="world" id="e">Из воды возвышаются огромные, уходящие в небо песочные часы. Сколько осталось — не разглядеть.</div></span></a>
+<a href="#nogo" class="swap" id="b8"><span id="win"><img src="win.jpg" title="Пусть все будут счасливы, и никто не уйдет обиженным!" /></span></a>
+
+<a href="#nogo" class="swap" id="c2"><span><img id="cross" src="cross.png"><div class="world" id="n">Странное ощущение — гладь воды легко держит, будто какого-то святого. Но я же не святой? Можно попробовать пройти дальше. Узнать.</div><div class="world" id="w">Суша. Кинул гайку. Гайка с всплеском ушла под сушу, подняв облачко пыли.</div><div class="world" id="s">Позади осталась тропинка через болото. </div><div class="world" id="e">Тут тоже сухо. Земля, наконец-то, можно встать на настоящую сухую землю. Вставай!</div></span></a>
+<a href="#nogo" class="swap" id="c5"><span><img id="cross" src="cross.png"><div class="world" id="n">Там окульная тропа. Но тебе она больше не нужна</div><div class="world" id="w">Там смерть. Но и она тебе не нужна.</div><div class="world" id="s">Там площадка. Но тебе она тоже больше не нужна</div><div class="world" id="e">Осталось идти вперед.</div></span></a>
+<a href="#nogo" class="swap" id="c6"><span><img id="cross" src="cross.png"><div class="world" id="n">Там ничего нет</div><div class="world" id="w">Лишь прямая дорога</div><div class="world" id="s">И там нет. Даже пустоты.</div><div class="world" id="e">По которой я пройду.</div></span></a>
+<a href="#nogo" class="swap" id="c7"><span><img id="cross" src="cross.png"><div class="world" id="n">Там ничего нет</div><div class="world" id="w">Лишь прямая дорога</div><div class="world" id="s">И там нет. </div><div class="world" id="e">По которой я пройду.</div></span></a>
+<a href="#nogo" class="swap" id="c8"><span><img id="cross" src="cross.png"><div class="world" id="n">Направо пойдешь — счастье обретешь</div><div class="world" id="w">Ну, как на камне написано... Назад повернешь — воротишься</div><div class="world" id="s">Налево пойдешь — правду узнаешь</div><div class="world" id="e"> А вперед пойдешь — заново начнешь.</div></span></a>
+
+<a href="#nogo" class="swap" id="d1"><span><img id="cross" src="cross.png"><div class="world" id="n">От дороги отходят когда то белые ступеньки. Несколько ступенек — и обрыв в бездну — не слышно даже удара от падения камешка. Ступеньки  кажутся очень прочными.</div><div class="world" id="w">В воздухе застыла круглая, дрожащая линза. Все кажется так близко. Лесные ветви — рукой коснуться. </div><div class="world" id="s">Сзади никого нет. Но если присмотреться — чей-то силуэт в ветвях.</div><div class="world" id="e">Дорога опять поворачивает. Воистину, окульная тропа.</div></span></a>
+<a href="#nogo" class="swap" id="d2"><span><img id="cross" src="cross.png"><div class="world" id="n">Эхо прошло мимо тебя, прямо по глади воды — в этом месте почти прозрачной. Может, ты тоже сможешь?</div><div class="world" id="w">Сзади слышны шаги. Виден крадущийся за тобой силуэт. Вдруг ты понимаешь, что это — просто эхо.  </div><div class="world" id="s">А отсюда на наполовину поглощенной болотом  легковушке слизи нет. Но лезть туда все равно не стоит.</div><div class="world" id="e">Тропинка, кажется, безопасна. Кинул гайку — на всякий случай. Не долетев, гайка рассыпалась в воздухе на тысячу капелек ртутно-металлической жидкости. </div></span></a>
+<!--<a href="#nogo" class="swap" id="d3"><span><img id="cross" src="cross.png"><div class="world" id="n"></div><div class="world" id="w"></div><div class="world" id="s"></div><div class="world" id="e"></div></span></a>-->
+<a href="#nogo" class="swap" id="d4"><span><img id="cross" src="cross.png"><div class="world" id="n">В туманном образе — старый одинокий француз в треуголке на каком-то острове. Как его туда занесло?</div><div class="world" id="w">А вот немец — с коротко стриженными усами и черным крестом на груди. </div><div class="world" id="s">Любопытно, эта площадка — она так и была? Если бы на ней жил кто-то, на этой площадке — так бы и жил тысячу лет в секунду?</div><div class="world" id="e">Думаю, надо пройти на ту ее часть, что ближе к цели. Это разумно.</div></span></a>
+<a href="#nogo" class="swap" id="d5"><span><img id="cross" src="cross.png"><div class="world" id="n">Впереди — прямая дорога. Настоящая.</div><div class="world" id="w">Площадка кажется очень древней. Кто до меня на нее ступал, кто после — ступит?</div><div class="world" id="s">Может быть, взять камешек на память? Нет. Из музеев не крадут.</div><div class="world" id="e">Туман рождает образы. Тени провожают меня в последний путь.</div></span></a>
+<a href="#nogo" class="swap" id="d8"><span><img id="cross" src="cross.png"><div class="world" id="n">Шагнешь назад дважды — и дойдешь до финала.</div><div class="world" id="w">Ты видишь размытый в воздухе силуэт. Человек,  сгорбившийся перед  экраном.  </div><div class="world" id="s">Шагнешь туда — и сетка станет красной. Веришь?</div><div class="world" id="e">Там, на экране — зеленый прямоугольник с закругленными углами. В нем — сетка, и человек водит по сетке мигающую зеленую точку. </div></span></a>
+
+<a href="#nogo" class="swap" id="e1"><span><img id="cross" src="cross.png"><div class="world" id="n">Тропа впереди сильно заросла — придется пробиваться сквозь заросли.</div><div class="world" id="w">Узкий участок болота и лес вдалеке. Если сделать большой прыжок, можно сразу попасть за Зону. Кинул камешек — пролетев полпути, тот вдруг рухнул вертикально вниз, в темную воду.</div><div class="world" id="s">Сзади кусты исчезают, а тропа сжижается. Если смотреть краем глаза, кажется, что по твоим следам идет какой-то человек.</div><div class="world" id="e">Ржавая легковая машина, покрытая неприятного вида слизью. Наверное, не стоит туда лезть.</div></span></a>
+<a href="#nogo" class="swap" id="e4"><span><img id="cross" src="cross.png"><div class="world" id="n">Те камни, что отбились от собратьев, и лежат наверху, осыпаются от дуновения, но те, что ниже — держат.</div><div class="world" id="w">В тумане виднеется заснеженная гора, по которой ползут силуэты туманных улиток</div><div class="world" id="s">А вот другая гора. Не улитки по ней ползут, но человечки, и каждый скидывает другого с вершины.</div><div class="world" id="e">Вот в тумане какие-то машины, деньги. Два ствола.</div></span></a>
+<a href="#nogo" class="swap" id="e5"><span><img id="cross" src="cross.png"><div class="world" id="n">Площадка выглядит очень старой. Старше и зоны, и болота. Вся покрыта трещинами - морщинами.</div><div class="world" id="w">Наверное, все же, это Зона состарила ее. Какие древние камни, но они моложе меня.</div><div class="world" id="s">На границах площадки — туман из видений и образов. </div><div class="world" id="e">Позади осталась и прямая дорога, и уход с нее.</div></span></a>
+<a href="#nogo" class="swap" id="e6"><span><img id="cross" src="cross.png"><div class="world" id="n">От поверхности болота поднимается вонючий пар.</div><div class="world" id="w">Виднеется покрытая туманом площадка. Кинул гайку. Гайка стукнула по бетону, отскочила и упала в узкую щель, прорезавшую плиту.</div><div class="world" id="s">Кажется, я окончательно сбился с пути. Вернуться назад?</div><div class="world" id="e">От правильной широкой дороги меня отделяет широкая полоса, поросшая каким-то низкорослым колючим кустарником, растущим прямо из воды.   </div></span></a>
+
+<a href="#nogo" class="swap" id="f1"><span><img id="cross" src="cross.png"><div class="world" id="n">Тропа идет вперед. Кустов там чуть поменьше, а хлюпает под ногами чуть сильнее — вот и все изменение. </div><div class="world" id="w">Над водой струится черный туман. Доносится  слабый  миндальный запах.</div><div class="world" id="s">Кувшинки вечно меняют цвет — теперь они кажутся алыми. Если выживу, надо будет запомнить место и нарвать в следующий раз. Хотя зачем мне тогда кувшинки?</div><div class="world" id="e">Иногда отступление — благоразумно.</div></span></a>
+<a href="#nogo" class="swap" id="f2"><span><img id="cross" src="cross.png"><div class="world" id="n">Впереди увязла ржавая машина, покрытая неприятного вида слизью. Наверное, не стоит туда лезть.</div><div class="world" id="w">Тропа поворачивает за угол. Не думаю, что после возникновения зоны тут до меня кто-то был, но тропа не зарастает.</div><div class="world" id="s">Вернуться назад никогда не поздно. Пока не влип совсем.</div><div class="world" id="e">Над покрытой неприятной на вид слизью моховой кочкой, кружат мелкие черные мушки</div></span></a>
+<!--<a href="#nogo" class="swap" id="f4"><span><img id="cross" src="cross.png"><div class="world" id="n"></div><div class="world" id="w"></div><div class="world" id="s"></div><div class="world" id="e"></div></span></a>-->
+<a href="#nogo" class="swap" id="f6"><span><img id="cross" src="cross.png"><div class="world" id="n">Это даже не бревно — а хлипкий мостик из грубо отесанных досок. Щели густо проросли мхом.</div><div class="world" id="w">Похожие на камыши растения при каждом порыве ветра источают облака семян. Над бревном семена удивительным образом не перелетают.</div><div class="world" id="s">Не знаю, можно ли там пройти. Но вернуться точно можно.</div><div class="world" id="e">Справа простирается черная гладь — до горизонта. Если и был берег и лес на той стороне, сейчас его не видно.</div></span></a>
+<a href="#nogo" class="swap" id="f8"><span><img id="cross" src="cross.png"><div class="world" id="n">Говорят, что смерть — это безумие. Огоньки исчезли — померещились что ли? Впереди гладкая, ваксенно-черная тропа к цели.  </div><div class="world" id="w">Но с других сторон — тоже. И с этой расстилается гладкая черная дорога.</div><div class="world" id="s">И с этой.  Гладкая. Иссиня-черная. Возврата нет. Но карта знает, куда нужно идти.</div><div class="world" id="e">И с этой. И со всех. И даже под ногами. </div></span></a>
+
+<a href="#nogo" class="swap" id="g2"><span><img id="cross" src="cross.png"><div class="world" id="n">Тропа, ведущая на север, изрядно заросла какими-то колючками. Сухими — можно костер разжечь.</div><div class="world" id="w">На воде покачиваются кувшинки. Отсюда они кажутся черными, будто бы даже обугленными.</div><div class="world" id="s">Наверное, стоит вернуться назад, и не ходить глухими окольными тропами.</div><div class="world" id="e">С запада дует странно сухой ветер. Там покачиваются заросли растений , уходящих, кажется,  корнями в бездну.</div></span></a>
+<a href="#nogo" class="swap" id="g6"><span><img id="cross" src="cross.png"><div class="world" id="n">Бревно кажется хрупкое, но оно держится под ногами. Правильно ли я поступил, сойдя с прямой дороги? Впереди — следующее бревно.</div><div class="world" id="w">Печально и мудро взирает из трясины голова огромной каменной кошки с человеческим лицом.</div><div class="world" id="s">Еще не поздно вернуться. Еще не поздно. Еще не.</div><div class="world" id="e">И другая голова смотрит, будто хочет о чем то спросить</div></span></a>
+<a href="#nogo" class="swap" id="g8"><span><img id="cross" src="cross.png"><div class="world" id="n">Огоньки зовут вперед, к цели. Не желая ждать заплутавшего путника, они отлетают все дальше. Надо поспешить. Под  ногами не тропа уж -  чьи-то черепа. Какая мелочь, право. </div><div class="world" id="w">Над поверхностью воды — как будто северное сияние. Или как колеблется прозрачная штора, закрепленная на небесах.  </div><div class="world" id="s">Глупо возвращаться, когда проделан такой путь. </div><div class="world" id="e">Пузыри газа пахнут не метаном — фиалками. И лиловый цвет у них — подходящий. Интересно было бы увидеть хозяина этих мест.</div></span></a>
+
+<a href="#nogo" class="swap" id="h1"><span><img id="cross" src="cross.png"><div class="world" id="n">Под ногами похлюпывает. Гать резко обрывается, и недалеко от того места, где она оборвалась, растут прекрасные кувшинки. Была бы подруга — нарвал бы ей.</div><div class="world" id="w">Часть площадки дальше стянулась каменным водоворотом, лункой ушла вглубь. Пнуть обломок кирпича — растянулся в полете и упал вниз, к невидимому дну. </div><div class="world" id="s">Можно вернуться на площадку. Посидеть, подумать. </div><div class="world" id="e">Гать уходит вдаль. Ровно, без разрывов. Слышал, что ее называют «Дорогой, ведущей к океану смерти».</div></span></a>
+<a href="#nogo" class="swap" id="h2"><span><img id="cross" src="cross.png"><div class="world" id="n">От дороги, ведущей к океану, отходит маленькая, незаметная тропинка. </div><div class="world" id="w">Вернуться на площадку? А зачем? Зачем все это?</div><div class="world" id="s">На границе площадки видно зеленоватое мерцание. То исчезает, то возникает вновь.</div><div class="world" id="e">Вперед, по дороге. И не важно, к чему она ведет.</div></span></a>
+<a href="#nogo" class="swap" id="h3"><span><img id="cross" src="cross.png"><div class="world" id="n">Болото как будто высохло. Нет, суша не появилась. Но исчезла вода. Оставив бездонную пропасть с неестественно растущими из нее изсохшими растениями.</div><div class="world" id="w">В другую  сторону дорога тоже изменилась. И под ногами. Выходит, я шел над бездной?</div><div class="world" id="s">Как будто каждая молекула воды вдруг стала невидимой. Потемнело небо. </div><div class="world" id="e">Дорога повисла над пропастью мостом. Хрупкая подстилка из соломы. </div></span></a>
+<a href="#nogo" class="swap" id="h4"><span><img id="cross" src="cross.png"><div class="world" id="n">Опять морок - пропасть  исчезла. Появилась вода, и сразу же закипела. Из варящихся заживо болотных растений валит пар. </div><div class="world" id="w">Хворостинки, из которых состоит гать,  кажется, сплетены в диковинный узор из пятиугольников.  </div><div class="world" id="s">Из болота выпирает металлическая площадка. Похоже на часть какого-то механизма.</div><div class="world" id="e">Дорога идет все дальше и дальше. Промелькнула искорка — может, светлячок? </div></span></a>
+<a href="#nogo" class="swap" id="h5"><span><img id="cross" src="cross.png"><div class="world" id="n">Опять пропасть — на этот раз уже без растений. Без дна.</div><div class="world" id="w">Над гатью повис туман. В сизой дымке роятся смутные образы. </div><div class="world" id="s">Следующая площадка, тоже металлическая, чуть повыше той, что рядом. Металл помят,   будто кто-то ударил по  по нему гигантским молотом. Чуть выше застыл и молот — или, скорее даже, пресс. </div><div class="world" id="e">Дорога идет все дальше и дальше. Огоньки не таятся — кружат светлым подвижным облачком, прямо над тропой.</div></span></a>
+<a href="#nogo" class="swap" id="h6"><span><img id="cross" src="cross.png"><div class="world" id="n">К гати прислонено бревно. Оно уходит вдаль, в зеленоватый туман. В тумане виднеются будто бы две скалы.</div><div class="world" id="w">Плотный туман сгустился над дорогой. Все тонет в сизой млечности.</div><div class="world" id="s">Из болота выпирает металлическая площадка. Похоже на часть какого-то механизма. Кажется, я здесь был.</div><div class="world" id="e">Облачко огоньков отлетает дальше, стоит лишь приблизиться к нему.</div></span></a>
+<a href="#nogo" class="swap" id="h7"><span><img id="cross" src="cross.png"><div class="world" id="n">Над поверхностью воды — как будто северное сияние. Или как колеблется прозрачная штора, закрепленная на небесах.  </div><div class="world" id="w">Из тонких лужиц на гати вытекают струйки почти прозрачного пара.</div><div class="world" id="s">Прямо посреди топи стоит слегка протертый диван. Не отказался бы поспать.</div><div class="world" id="e">Светлячки - светлячки ли? -  опять далеко. Летают, дразнятся.</div></span></a>
+<a href="#nogo" class="swap" id="h8"><span><img id="cross" src="cross.png"><div class="world" id="n">Болотные огни вдруг мигнули и оказались прямо напротив. Но достать их все равно не получается. Гать поворачивает под прямым углом. Судя по карте, теперь она идет прямо в цели.</div><div class="world" id="w">Тропа назад вдруг погрузилась в болото. На том месте, где была дорога, поднялось несколько больших вонючих пузырей. </div><div class="world" id="s">Из болота торчит удивительно гладкая и круглая, ничем не обросшая скала. Из гладкой поверхности камня выпирает белый-белый череп. Надеюсь, не человека.</div><div class="world" id="e">Из болота вырастает несколько  высоких, выше меня, растений. Стебли сгибается под тяжестью цветков, чем-то похожих на ракушки с зубами. </div></span></a>
+
+<a href="#nogo" class="swap" id="j0"><span><img id="cross" src="cross.png"><div class="world" id="n">Часть площадки дальше стянулась каменным водоворотом, лункой ушла вглубь. Пнуть обломок кирпича — растянулся в полете и упал вниз, к невидимому дну. Подойти и заглянуть вовнутрь?</div><div class="world" id="w">Застывший лес укоризненно смотрит на меня: "и куда ты полез, олух, вернись!"</div><div class="world" id="s">В начале «стартовой площадки» все спокойно. И тихо. Как всегда.</div><div class="world" id="e">Кирпичные обломки валяются повсюду. Странная трава, жесткая и черная. Но,  судя по слухам, тут нечего опасаться.</div></span></a>
+<a href="#nogo" class="swap" id="j1"><span><img id="cross" src="cross.png"><div class="world" id="n">Вот и болото. Площадка переходит в него не резко — просто разжижается по пути. Поверх луж видна гать — хрупкая на вид дорога из сгнившей давным-давно соломы.</div><div class="world" id="w">Кирпичные развалины. Между камней что-то поблескивает. Наверно осколки оконных стекол.</div><div class="world" id="s">Руины — рухнувшие кирпичные стены. Так и хочется взять мелок и написать - «Здесь был я». Смешно. К следующему посещению все исчезнет.</div><div class="world" id="e">На границе площадки видно зеленоватое мерцание. То исчезает, то возникает вновь.</div></span></a>
+<a href="#nogo" class="swap" id="j4"><span><img id="cross" src="cross.png"><div class="world" id="n">Мимо металлической площадки тянется Дорога к Океану Смерти. Не очень-то она и уютна, эта подгибающаяся под ногами гать из соломы. </div><div class="world" id="w">Ржавые воспоминания незапамятных времен переходят в топь. Над застывшей водой скорчились мертвые стволы деревьев.</div><div class="world" id="s">Нагромождение ржавых шестеренок, закрепленных на кожухах деталей, скрипит, шестерни вращаются — туда-сюда, туда-сюда. Странно, но только отсюда слышен лязг, издаваемый ими.</div><div class="world" id="e">Следующая площадка, тоже металлическая, чуть повыше, чем та, на которой стою. Металл помят,   будто кто-то ударил по  по нему гигантским молотом. Чуть выше застыл и молот — или, скорее даже, пресс. </div></span></a>
+<a href="#nogo" class="swap" id="j7"><span><img id="cross" src="cross.png"><div class="world" id="n">Мимо металлической площадки тянется гать. Над ней стелется туман.</div><div class="world" id="w">Следующая площадка, тоже металлическая, чуть повыше, чем та, на которой  стою. Металл помят,   будто кто-то ударил по  по нему гигантским молотом. Чуть выше застыл и молот — или, скорее даже, пресс. </div><div class="world" id="s">Над следующей площадкой завис Золотой Шар. Как на картинке. Протяни лишь руку... Кинул гайку. В воздухе сверкнули, вылетев из шара, тончайшие лезвия. Не долетев, гайка рассыпалась в металлическую пыль.</div><div class="world" id="e">Ржавые механизмы переходят в топь. Над застывшей водой скорчились деревья. Кажется, тоже ржавые.</div></span></a>
+
+<a href="#nogo" class="swap" id="k0"><span><img id="cross" src="cross.png"><div class="world" id="n">Я на верном пути — это «стартовая площадка». На вид -  обычные развалины.  В десяти метрах отсюда, как говорят, нечего опасаться. </div><div class="world" id="w">Вернуться, пока не влез куда-нибудь? И бродить по лесу кругами? </div><div class="world" id="s">Застывший лес будто прощается со мною. Вот ветка махнула — да так и зависла.  </div><div class="world" id="e">Руины — рухнувшие кирпичные стены. Так и хочется взять мелок и написать - «Здесь был я». Смешно. К следующему посещению все исчезнет.</div></span></a>
+<a href="#nogo" class="swap" id="k1"><span><img id="cross" src="cross.png"><div class="world" id="n">Кирпичные обломки валяются повсюду. Странная трава, жесткая и черная. Но,  судя по слухам, тут нечего опасаться.</div><div class="world" id="w">В начале «стартовой площадки» все спокойно. И тихо. Как всегда.</div><div class="world" id="s">Позади остался лес. Белка зависла в прыжке с ветки на ветку, прямо в воздухе.</div><div class="world" id="e">На границе площадки видно синеватое мерцание. Поблескивают искорки-молнии, будто некто решил устроить маленькую грозу.</div></span></a>
+<a href="#nogo" class="swap" id="k9"><span><img id="cross" src="cross.png"><div class="world" id="n">От глади болота доносится тонкий сладковатый запах. Странно. Хотя для этого места нет ничего странного. </div><div class="world" id="w">Земля под ногами слегка покачивается. Брось гайку чуть подальше — и та исчезнет, не достигнув земли. </div><div class="world" id="s">Что-то говорит мне, что я зашел не с той стороны. Надо возвращаться.</div><div class="world" id="e">Застывший лес слегка мерцает. Будто манит. Или это Зона так прогоняет меня?</div></span></a>
+<a href="#nogo" id="maze"></a>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

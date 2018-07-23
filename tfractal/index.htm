@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>T-fractal</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <style type="text/css">
+		body
+		{
+			margin: 0px;
+			padding: 0px;
+		}
+		
+		#controls
+		{
+			position: fixed;
+			display: block;
+			top:  10px;
+			right: 10px;
+			padding: 10px;
+			background-color: rgba(255, 255, 255, 0.7);
+			border-radius: 5px;
+		}
+		
+		#controls td
+		{
+			text-align: center;
+		}
+		
+		#n_value {
+			width: 30px;
+		}
+		.num {
+			width:15px;
+			height:15px;
+			font-size:15px;
+		}
+		
+	</style>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+	<div id="controls">
+		<table border="0" cellpadding="0" cellspacing="10">
+			<tr><td>
+				N = <input type="text" id="n_value" value="3" />
+				<input type="button" id="apply_n" value="ok" />
+			</td></tr>
+			<tr><td id="cb_place">
+				
+			</td></tr>
+			<tr><td>
+				<input type="button" id="go" value="go!" />
+			</td></tr>
+			<tr><td>
+				<input type="button" id="save" value="save as image" />
+			</td></tr>
+		</table>
+	</div>
+<script type="text/javascript" src="script.js"></script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-16588144-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</body>
+</html>
