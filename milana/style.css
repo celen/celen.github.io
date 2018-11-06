@@ -1,0 +1,45 @@
+@import "compass/css3";
+
+@import url(https://fonts.googleapis.com/css?family=Share+Tech+Mono);
+
+
+body{
+  background: black;
+}
+
+
+svg{
+  width: 600px;
+  height: 120px;
+  display: block;
+  position: relative;
+  overflow: hidden; 
+  margin: 0 auto;
+  background: black;
+}
+
+#controls span {
+    display:inline-block;
+}
+        
+#playpause {
+    background:#eee;
+    color:#333;
+    padding:0 5px;
+    font-size:12pt;
+    text-transform:uppercase;
+    width:50px;
+}
+
+#tv {
+    background-image: url("tv.png");
+    background-repeat: no-repeat;
+    width: 900;
+    height:620;
+    padding-left:76;
+    padding-top:125;
+}
+
+#tv:hover {
+    background-image: url("tv-2.png");
+}
