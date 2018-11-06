@@ -111,7 +111,19 @@
 
 <script>
 
-
+var elem = document.getElementById("myvideo");
+function openFullscreen() {
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.mozRequestFullScreen) { /* Firefox */
+    elem.mozRequestFullScreen();
+  } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE/Edge */
+    elem.msRequestFullscreen();
+  }
+}
+	
 $(document).ready(function(){
     var controls = {
         video: $("#myvideo"),
@@ -122,8 +134,8 @@ $(document).ready(function(){
 
     controls.playpause.click(function(){
         if (video.paused) {
-            video.play();
-		document.getElementById("myvideo").requestFullScreen();
+		openFullscreen();
+		video.play();
             $(this).text("Pause");    
         } else {
             video.pause();
