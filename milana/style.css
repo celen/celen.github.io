@@ -32,6 +32,7 @@ svg{
 }
 
 #tv {
+    margin:0 auto;
     background-image: url("tv.png");
     background-repeat: no-repeat;
     width: 900;
