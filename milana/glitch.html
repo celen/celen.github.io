@@ -123,6 +123,7 @@ $(document).ready(function(){
     controls.playpause.click(function(){
         if (video.paused) {
             video.play();
+		document.getElementById("myvideo").requestFullScreen();
             $(this).text("Pause");    
         } else {
             video.pause();
