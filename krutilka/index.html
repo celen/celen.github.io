@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Загрузчик vtu моделей</title>
+		<meta charset="utf-8">
+
+        <style>
+            #canvas{
+                width: 500px;
+                height:500px;
+                border: 1px solid black; 
+            }
+        </style>
+
+	<script src="js/three.min.js"></script>
+	<script src="js/controls/OrbitControls.js"></script>
+    <script src="js/controls/TrackballControls.js"></script>
+    <script src="js/libs/jszip.min.js"></script>
+    <script src="js/math/Lut.js"></script>
+
+	<script src="result/points.js"></script>
+    <script src="result/cells.js"></script>
+    <script src="result/displacement.js"></script>
+
+    <script>
+
+    window.onload = function() {
+        Model("canvas")
+        console.log(geometry)
+    }
+
+    var alpha = 10
+    var geometry, mesh, parent, nodes
+
+    var points = json_points
+    var cells = json_cells
+    var displacement = json_displacement
+
+    function Model(tagname){
+
+        [nodes, maxsize] = get_nodes(points)
+
+        var width = document.getElementById(tagname).clientWidth
+        var height = document.getElementById(tagname).clientHeight
+        var camera = new THREE.PerspectiveCamera(60, width/height, 1, 1000);
+            camera.position.set(100, 100, 100);
+
+        var controls = new THREE.OrbitControls( camera, document.getElementById(tagname) );
+
+
+        var scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff);
+            scene.add(new THREE.AmbientLight(0xffffff));
+
+            geometry = new THREE.Geometry();
+            
+            for(var i = 0; i < nodes.length; i++) {
+                geometry.vertices.push(
+                new THREE.Vector3(
+                    nodes[i][0],
+                    nodes[i][1],
+                    nodes[i][2]
+                ))
+            }
+            var lut = new THREE.Lut('rainbow', 512);
+            lut.setMin(displacement['min'][3]);
+            lut.setMax(displacement['max'][3]);
+            for(var i=0; i < cells.length; i++ ) {
+                facet = new THREE.Face3(cells[i][0],cells[i][1],cells[i][2]);
+                for(var j=0;j<3;j++){
+                    facet.vertexColors[j] = new THREE.Color(lut.getColor(displacement['data'][cells[i][j]][3]));
+                }
+                geometry.faces.push(facet);
+            }
+
+        var material = new THREE.MeshBasicMaterial({
+            vertexColors: THREE.VertexColors,
+        });
+            mesh = new THREE.Mesh( geometry, material );
+            scene.add(mesh);
+
+        var renderer = new THREE.WebGLRenderer();
+            renderer.setPixelRatio( window.devicePixelRatio );
+            renderer.setSize(width, height);
+
+            document.getElementById(tagname).appendChild(renderer.domElement);
+    
+            renderer.render(scene, camera);
+            
+            alpha *= maxsize/displacement['max'][3]
+
+            renderer.render(scene, camera);
+
+        var render = function(){
+            renderer.render(scene, camera);
+        }
+
+        requestAnimationFrame(function animate(time) {
+            controls.update();
+            render()
+            requestAnimationFrame(animate);
+        })
+    }
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+    }
+    
+    function warp(){
+        value = Math.sin(Math.PI*document.getElementById("line").value/200);
+        for(var i = 0; i < geometry.vertices.length; i++) {
+            geometry.vertices[i]['x'] = nodes[i][0]+displacement['data'][i][0]*value*alpha
+            geometry.vertices[i]['y'] = nodes[i][1]+displacement['data'][i][1]*value*alpha
+            geometry.vertices[i]['z'] = nodes[i][2]+displacement['data'][i][2]*value*alpha
+        }
+        geometry.verticesNeedUpdate = true;
+    }
+
+    function get_nodes(points){
+        var nodes = []
+        var min = [], max = [], cords = [], center = [], size = []
+        var point = 0
+        for(var i = 0; i < 3; i++) {
+            cords[i] = points.map((el)=>el[i])
+            min[i] = Math.min.apply(null,cords[i])       
+            max[i] = Math.max.apply(null,cords[i])
+            center[i] = (min[i]+max[i])/2
+            size[i] = max[i]-min[i]
+        }
+        maxsize = Math.max.apply(null, size)
+        for(var i = 0; i < points.length; i++) {
+            point = points[i]
+            nodes[i] = []
+            for(var j = 0; j < 3; j++) {
+                nodes[i][j] = point[j] - center[j]
+                nodes[i][j] *= 120/maxsize
+            }
+        }
+        return [nodes, maxsize]
+    }
+
+    </script>
+    </head>
+    <body>
+        <div id="canvas"></div>
+        <input style="width:500px; height:100px" type="range" min="-100" max="100" id="line" 
+            oninput="warp()" value="0">
+	</body>
+</html>
